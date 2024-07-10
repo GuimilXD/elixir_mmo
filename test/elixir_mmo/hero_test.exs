@@ -7,7 +7,7 @@ defmodule HeroTest do
   @hero_respawn_delay Application.compile_env!(:elixir_mmo, :hero_respawn_delay)
 
   setup do
-    {:ok, pid} = Hero.start_link(@test_hero, {0, 0})
+    {:ok, pid} = Hero.start_link(@test_hero)
 
     %{hero_name: @test_hero, pid: pid}
   end
@@ -46,4 +46,5 @@ defmodule HeroTest do
   end
 
   # TODO: write a test for perform_attack, currently it needs GameServer to be runnning so that it can fetch other heroes
+  # Although a GameServer could be spawned, it wouldn't be the most elegant solution
 end
