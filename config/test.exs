@@ -17,7 +17,7 @@ config :swoosh, :api_client, false
 # Print only warnings and errors during test
 config :logger, level: :warning
 
-config :elixir_mmo, hero_respawn_delay: 50
+config :elixir_mmo, hero_respawn_delay: 25
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime

@@ -56,7 +56,7 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :elixir_mmo, hero_respawn_delay: 5000
+config :elixir_mmo, hero_respawn_delay: 5000, hero_random_spawn: true
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
