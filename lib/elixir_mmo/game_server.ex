@@ -2,6 +2,8 @@ defmodule ElixirMmo.GameServer do
   alias ElixirMmo.Hero
   use DynamicSupervisor
 
+  require Logger
+
   @name __MODULE__
 
   def start_link(init_arg) do
@@ -22,6 +24,7 @@ defmodule ElixirMmo.GameServer do
 
     case DynamicSupervisor.start_child(@name, child_spec) do
       {:ok, pid}  ->
+        Logger.debug("A new hero named #{name} was added to the game server}")
         Phoenix.PubSub.broadcast!(ElixirMmo.PubSub, "hero:updates", Hero.get_state_by_pid(pid))
       _ -> :ok
     end
@@ -33,6 +36,7 @@ defmodule ElixirMmo.GameServer do
       pid when is_pid(pid) ->
         %Hero{name: name} = Hero.get_state_by_pid(pid)
 
+        Logger.debug("A #{name} was removed from the game server}")
         Phoenix.PubSub.broadcast!(ElixirMmo.PubSub, "hero:updates", {:removed_hero, name})
 
         DynamicSupervisor.terminate_child(@name, pid)
