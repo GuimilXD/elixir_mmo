@@ -31,12 +31,9 @@ defmodule ElixirMmo.GameServer do
   def remove_hero(name) do
     case Hero.get_pid_by_name(name) do
       pid when is_pid(pid) ->
-        hero = Hero.get_state_by_pid(pid)
+        %Hero{name: name} = Hero.get_state_by_pid(pid)
 
-        # broadcast a empty hero struct to remove it from the list
-        # the benefits of implementing proper deletion (handling more events, etc...) is probably not worth the extra complexity
-        # TODO: test if proper deletion is needed
-        Phoenix.PubSub.broadcast!(ElixirMmo.PubSub, "hero:updates", %Hero{name: hero.name})
+        Phoenix.PubSub.broadcast!(ElixirMmo.PubSub, "hero:updates", {:removed_hero, name})
 
         DynamicSupervisor.terminate_child(@name, pid)
       nil ->
@@ -53,7 +50,12 @@ defmodule ElixirMmo.GameServer do
     |> Enum.map(fn hero ->
         {_, pid, :worker, _} = hero
 
-        Hero.get_state_by_pid(pid)
+        # Whenever a player attacks, they are in the region of their own attack.
+        # However, a process cannot use GenServer.call on itself (to prevent dead locks), therefore we should filter out this case
+        if pid != self() do
+          Hero.get_state_by_pid(pid)
+        end
     end)
+    |> Enum.reject(&(&1 == nil))
   end
 end

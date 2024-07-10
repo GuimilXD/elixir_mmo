@@ -1,4 +1,5 @@
 defmodule ElixirMmo.Hero do
+  alias ElixirMmo.GameServer
   alias Phoenix.PubSub
   alias ElixirMmo.MapGrid
   alias ElixirMmo.Hero
@@ -50,6 +51,13 @@ defmodule ElixirMmo.Hero do
   end
 
   @impl true
+  def handle_cast(:perform_attack, state) do
+    heroes = GameServer.list_heroes()
+
+    {:noreply, perform_attack_internal(state, heroes)}
+  end
+
+  @impl true
   def handle_info(:respawn, %{name: name}) do
     new_hero = %Hero{name: name, position: MapGrid.get_random_position(), is_alive: true}
 
@@ -62,7 +70,25 @@ defmodule ElixirMmo.Hero do
     {:via, Registry, {ElixirMmo.HeroRegistry, name}}
   end
 
-  defp move_internal(%Hero{} = hero, {dx, dy}) do
+  defp adjacent_positions({x, y}) do
+    for dx <- -1..1, dy <- -1..1 do
+      {x + dx, y + dy}
+    end
+  end
+
+  defp perform_attack_internal(state, []), do: state
+  defp perform_attack_internal(%Hero{is_alive: false} = state, _heroes), do: state
+
+  defp perform_attack_internal(%Hero{name: name, position: position} = state, heroes) do
+    Enum.filter(heroes, fn %Hero{name: other_name, position: other_position} ->
+      other_position in adjacent_positions(position) and name != other_name
+    end)
+    |> Enum.each(fn %{name: other_name} -> Hero.kill(other_name) end)
+
+    state
+  end
+
+  defp move_internal(%{} = hero, {dx, dy}) do
     {x, y} = hero.position
 
     new_pos = {x + dx, y + dy}
@@ -93,6 +119,10 @@ defmodule ElixirMmo.Hero do
 
   def move_right(name) do
     move(name, {1, 0})
+  end
+
+  def perform_attack(name) do
+    cast_by_name(name, :perform_attack)
   end
 
   def kill(name) do

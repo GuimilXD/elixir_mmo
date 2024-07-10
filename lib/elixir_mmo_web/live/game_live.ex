@@ -15,6 +15,11 @@ defmodule ElixirMmoWeb.GameLive do
   end
 
   @impl true
+  def handle_info({:removed_hero, name }, socket) do
+    {:noreply, update(socket, :heroes, &Map.delete(&1, name))}
+  end
+
+  @impl true
   def handle_info(%Hero{} = updated_hero, socket) do
     {:noreply, update(socket, :heroes, &Map.put(&1, updated_hero.name, updated_hero))}
   end
@@ -23,15 +28,9 @@ defmodule ElixirMmoWeb.GameLive do
   def handle_event(
         "keydown",
         %{"key" => " "},
-        %{assigns: %{my_hero_name: my_hero_name, heroes: heroes}} = socket
+        %{assigns: %{my_hero_name: my_hero_name}} = socket
       ) do
-    my_hero = Map.get(heroes, my_hero_name)
-
-    Enum.filter(heroes, fn {name, hero} ->
-      hero.position in adjacent_positions(my_hero.position) and name != my_hero_name
-    end)
-    |> Enum.each(fn {name, _hero} -> Hero.kill(name) end)
-
+      Hero.perform_attack(my_hero_name)
     {:noreply, socket}
   end
 
@@ -131,11 +130,5 @@ defmodule ElixirMmoWeb.GameLive do
         GameServer.list_heroes()
         |> Enum.into(%{}, fn %Hero{name: name} = hero -> {name, hero} end)
     )
-  end
-
-  defp adjacent_positions({x, y}) do
-    for dx <- -1..1, dy <- -1..1 do
-      {x + dx, y + dy}
-    end
   end
 end
