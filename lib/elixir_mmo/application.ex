@@ -15,9 +15,11 @@ defmodule ElixirMmo.Application do
       # Start Finch
       {Finch, name: ElixirMmo.Finch},
       # Start the Endpoint (http/https)
-      ElixirMmoWeb.Endpoint
+      ElixirMmoWeb.Endpoint,
       # Start a worker by calling: ElixirMmo.Worker.start_link(arg)
       # {ElixirMmo.Worker, arg}
+      {Registry, keys: :unique, name: ElixirMmo.HeroRegistry},
+      ElixirMmo.GameServer
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
