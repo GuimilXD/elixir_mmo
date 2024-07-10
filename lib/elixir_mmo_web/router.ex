@@ -17,7 +17,7 @@ defmodule ElixirMmoWeb.Router do
   scope "/", ElixirMmoWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", JoinGameLive
     live "/game", GameLive
   end
 
