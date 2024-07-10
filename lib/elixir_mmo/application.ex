@@ -19,8 +19,14 @@ defmodule ElixirMmo.Application do
       # Start a worker by calling: ElixirMmo.Worker.start_link(arg)
       # {ElixirMmo.Worker, arg}
       {Registry, keys: :unique, name: ElixirMmo.HeroRegistry},
-      ElixirMmo.GameServer
     ]
+
+    children =
+      if Mix.env() != :test do
+        children ++ [ElixirMmo.GameServer]
+      else
+        children
+      end
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
