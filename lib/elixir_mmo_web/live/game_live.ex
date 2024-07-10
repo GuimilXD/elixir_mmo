@@ -15,7 +15,7 @@ defmodule ElixirMmoWeb.GameLive do
   end
 
   @impl true
-  def handle_info({:removed_hero, name }, socket) do
+  def handle_info({:removed_hero, name}, socket) do
     {:noreply, update(socket, :heroes, &Map.delete(&1, name))}
   end
 
@@ -30,7 +30,7 @@ defmodule ElixirMmoWeb.GameLive do
         %{"key" => " "},
         %{assigns: %{my_hero_name: my_hero_name}} = socket
       ) do
-      Hero.perform_attack(my_hero_name)
+    Hero.perform_attack(my_hero_name)
     {:noreply, socket}
   end
 
@@ -59,7 +59,6 @@ defmodule ElixirMmoWeb.GameLive do
 
   @impl true
   def render(assigns) do
-    # grid-rows and grid-cols are currently hardcoded due to a bug that makes using string interpolation unreliable
     # TODO: use the values returned by MapGrid.get_rows/0 and MapGrid.get_columns/0
     ~H"""
     <div phx-window-keydown="keydown" class="m-auto w-max grid grid-cols-10 grid-rows-10">
