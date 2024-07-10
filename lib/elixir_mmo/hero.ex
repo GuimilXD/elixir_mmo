@@ -9,8 +9,7 @@ defmodule ElixirMmo.Hero do
   defstruct [:name, :position, :is_alive]
 
   @name __MODULE__
-  # 5 seconds
-  @respawn_delay 5000
+  @respawn_delay Application.compile_env!(:elixir_mmo, :hero_respawn_delay)
 
   # Server-side code
 
@@ -51,7 +50,7 @@ defmodule ElixirMmo.Hero do
     new_hero = %Hero{state | is_alive: false}
 
     Logger.debug(
-      "#{state.name} was killed, respawning in 5 seconds. New state: #{inspect(new_hero)}"
+      "#{state.name} was killed, respawning in #{@respawn_delay} miliseconds. New state: #{inspect(new_hero)}"
     )
 
     PubSub.broadcast!(ElixirMmo.PubSub, "hero:updates", new_hero)
