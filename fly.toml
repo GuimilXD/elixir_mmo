@@ -1,16 +1,16 @@
-# fly.toml app configuration file generated for elixir-mmo on 2024-07-10T18:59:35-03:00
+# fly.toml app configuration file generated for elixir-mmo-spring-flower-9207 on 2024-07-10T19:26:21-03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'elixir-mmo'
+app = 'elixir-mmo-spring-flower-9207'
 primary_region = 'gru'
 kill_signal = 'SIGTERM'
 
 [build]
 
 [env]
-  PHX_HOST = 'elixir-mmo.fly.dev'
+  PHX_HOST = 'elixir-mmo-spring-flower-9207.fly.dev'
   PORT = '8080'
 
 [http_service]
