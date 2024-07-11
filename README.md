@@ -2,7 +2,7 @@
 
 ## Demo
 
-You can play it here: (borked for now)
+You can play it here: https://elixir-mmo.onrender.com
 
 ## Controls
 
