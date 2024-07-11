@@ -5,6 +5,8 @@ defmodule ElixirMmo.Application do
 
   use Application
 
+  @env Mix.env()
+
   @impl true
   def start(_type, _args) do
     children = [
@@ -22,7 +24,7 @@ defmodule ElixirMmo.Application do
     ]
 
     children =
-      if Mix.env() != :test do
+      if @env != :test do
         children ++ [ElixirMmo.GameServer]
       else
         children
